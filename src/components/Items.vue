@@ -9,7 +9,7 @@
   </tbody>
   <tbody v-else class="table--body">
     <Item
-      :item="{ title: 'Нет данных', name: 'Нет данных', number: 'Нет данных' }"
+      :item="{ company: 'Нет данных', name: 'Нет данных', phone: 'Нет данных' }"
       :showDeleteBtn="false"
     />
   </tbody>

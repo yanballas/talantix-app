@@ -1,18 +1,29 @@
 <template>
   <main class="main">
-    <table class="table">
+    <table v-if="isItemsLoading" class="table">
       <thead class="table--header">
         <tr class="table--line">
-          <th class="table--cell table--filtered">Название &#11015;</th>
-          <th class="table--cell table--filtered table--stroke">
+          <th
+            class="table--cell table--filtered"
+            @click="handleSortValue('company')"
+          >
+            Название &#11015;
+          </th>
+          <th
+            class="table--cell table--filtered table--stroke"
+            @click="handleSortValue('name')"
+          >
             ФИО директора &#11015;
           </th>
           <th class="table--cell table--stroke">Номер телефона</th>
           <th class="table--cell"></th>
         </tr>
       </thead>
-      <Items :items="items" @remove="deleteItem"></Items>
+      <Items :items="items" @remove="handleRemove"></Items>
     </table>
+    <div v-else class="main--preloader">
+      <h2 class="main--headling">Идёт загрузка</h2>
+    </div>
   </main>
 </template>
 
@@ -22,30 +33,22 @@ export default {
   components: {
     Items,
   },
-  data() {
-    return {
-      items: [
-        {
-          id: 1,
-          title: 'ООО "Вектор"',
-          name: "Иванов И.И.",
-          number: "7999999999",
-        },
-        {
-          id: 2,
-          title: "ИП Сидоров С.С.",
-          name: "Сидоров С.С.",
-          number: "7546456456456",
-        },
-      ],
-    };
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+    isItemsLoading: {
+      type: Boolean,
+      required: true,
+    },
   },
   methods: {
-    createItem(item) {
-      this.items.push(item);
+    handleRemove(item) {
+      this.$emit("remove", item);
     },
-    deleteItem(item) {
-      this.items = this.items.filter((value) => value.id !== item.id);
+    handleSortValue(value) {
+      this.$emit("sort", value);
     },
   },
 };
@@ -54,10 +57,23 @@ export default {
 <style>
 .main {
   flex-grow: 1;
-  border: 2px solid #008c8c;
+}
+
+.main--preloader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main--headling {
+  font-size: 32px;
+  line-height: 120%;
 }
 
 .table {
+  border: 2px solid #008c8c;
   width: 100%;
   font-size: 16px;
   line-height: 120%;

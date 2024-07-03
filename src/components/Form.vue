@@ -2,25 +2,18 @@
   <div class="card">
     <h3 class="headling">Добавить организацию</h3>
     <form class="card--form" @submit.prevent>
+      <Input v-model.trim="item.company" type="text" placeholder="Название" />
       <Input
-        v-model="item.title"
-        type="text"
-        placeholder="Название"
-      />
-      <Input
-        v-model="item.number"
-        type="text"
+        v-model.trim="item.phone"
+        type="number"
         placeholder="Номер телефона"
       />
-      <Input
-        v-model="item.name"
-        type="text"
-        placeholder="ФИО директора"
-      />
+      <Input v-model.trim="item.name" type="text" placeholder="ФИО директора" />
     </form>
     <div class="card--btns">
-      <Button>Отмена</Button>
-      <Button @click="addItem">Ок</Button>
+      <Button @click="clearItem" class="card--btn_clean">Стереть</Button>
+      <Button @click="hideModal">Отмена</Button>
+      <Button :disabled="!isFormValid" @click="handleSuccessClick">Ок</Button>
     </div>
   </div>
 </template>
@@ -34,25 +27,53 @@ export default {
     Button,
     Input,
   },
+  props: {
+    items: {
+      type: Array,
+    },
+  },
   data() {
     return {
       item: {
-        title: "",
+        company: "",
         name: "",
-        number: "",
+        phone: "",
       },
     };
   },
+  computed: {
+    isFormValid() {
+      for (let key in this.item) {
+        if (this.item[key] === "") {
+          return false;
+        }
+      }
+      return true;
+    },
+  },
   methods: {
     addItem() {
-      this.item.id = Date.now();
-      this.$emit("create", this.item);
-      this.clearItem();
+      if (this.isFormValid) {
+        const id = this.items.reduce((acc, val) => {
+          if (val.id > acc) return (acc = val.id);
+          return acc;
+        }, 0);
+
+        this.item.id = id + 1;
+        this.$emit("create", this.item);
+      }
     },
     clearItem() {
-      this.title = "";
-      this.name = "";
-      this.number = "";
+      this.item.company = "";
+      this.item.name = "";
+      this.item.phone = "";
+    },
+    hideModal() {
+      this.$emit("update:showModal", false);
+    },
+    handleSuccessClick() {
+      this.addItem();
+      this.hideModal();
     },
   },
 };
@@ -82,10 +103,13 @@ export default {
 }
 
 .card--btns {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   padding: 16px;
+}
+
+.card--btn_clean {
+  grid-column: 1 / -1;
 }
 </style>

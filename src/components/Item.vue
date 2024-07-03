@@ -1,8 +1,8 @@
 <template>
   <tr class="table--line">
-    <td class="table--cell">{{ item.title }}</td>
+    <td class="table--cell">{{ item.company }}</td>
     <td class="table--cell table--stroke">{{ item.name }}</td>
-    <td class="table--cell table--stroke">{{ item.number }}</td>
+    <td class="table--cell table--stroke">{{ item.phone }}</td>
     <td
       class="table--cell table--delete"
       @click="$emit('remove', item)"
